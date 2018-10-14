@@ -1,6 +1,6 @@
 ﻿namespace GroupProjectBackend.Config
 {
-    public interface IConfigurationProvider
+    public interface IConfigProvider
     {
         string ConnectionString { get; }
     }

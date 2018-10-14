@@ -22,8 +22,6 @@ namespace GroupProjectBackend.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            var a = _dbContext.Database.ProviderName;
-
             return new string[] { "value1", "value2" };
         }
 

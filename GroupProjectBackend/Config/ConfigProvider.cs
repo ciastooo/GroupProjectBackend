@@ -2,11 +2,11 @@
 {
     using Microsoft.Extensions.Configuration;
 
-    public class ConfigurationProvider : IConfigurationProvider
+    public class ConfigProvider : IConfigProvider
     {
         private readonly IConfiguration _config;
 
-        public ConfigurationProvider(IConfiguration config)
+        public ConfigProvider(IConfiguration config)
         {
             _config = config;
         }

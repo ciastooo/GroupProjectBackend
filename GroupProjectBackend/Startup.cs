@@ -1,8 +1,11 @@
 ﻿namespace GroupProjectBackend
 {
+    using GroupProjectBackend.Config;
+    using GroupProjectBackend.Models.DB;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Swashbuckle.AspNetCore.Swagger;
@@ -19,12 +22,17 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            var config = new ConfigProvider(Configuration);
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
             });
+            services.AddDbContext<GroupProjectContext>(opt => opt.UseSqlServer(config.ConnectionString));
+
+            //Singletons
+            services.AddSingleton<IConfigProvider>(config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
