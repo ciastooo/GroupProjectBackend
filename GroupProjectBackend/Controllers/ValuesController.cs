@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GroupProjectBackend.Models.DB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GroupProjectBackend.Controllers
@@ -10,10 +11,19 @@ namespace GroupProjectBackend.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly GroupProjectContext _dbContext;
+
+        public ValuesController(GroupProjectContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            var a = _dbContext.Database.ProviderName;
+
             return new string[] { "value1", "value2" };
         }
 
