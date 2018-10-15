@@ -10,6 +10,7 @@ Proces instalacji można praktycznie przeklikać. Polecam nazwać serwer "SQLEXP
 Jak coś pójdzie nie tak, to spokojnie, w SMS da się to raczej naprawić i wyklikać.
 
 ## SQL Server Management Studio
+Jeśli dobrze udało się postawić Expressa to tutaj powinno wam znajdywać lokalny serwer (coś w stylu "DESKTOP-BLABLALBA\SQLEXPRESS).
 Musimy utworzyć bazę "GroupProject" oraz dodać do niej użytkownika "backend" z hasłem "backend".
 
 ## VisualStudio
