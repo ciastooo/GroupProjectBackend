@@ -1,9 +1,11 @@
 ﻿namespace GroupProjectBackend
 {
-    using GroupProjectBackend.Config;
-    using GroupProjectBackend.Models.DB;
+    using Config;
+    using Models.DB;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -22,21 +24,32 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var config = new ConfigProvider(Configuration);
+            IConfigProvider config = new ConfigProvider(Configuration);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
             });
-            services.AddDbContext<GroupProjectContext>(opt => opt.UseSqlServer(config.ConnectionString));
+
+            //DB and identity
+            services.AddDbContext<GroupProjectDbContext>(opt => opt.UseSqlServer(config.ConnectionString));
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddEntityFrameworkStores<GroupProjectDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(opt =>
+            {
+                opt.Password.RequiredLength = 6;
+                opt.User.RequireUniqueEmail = true;
+            });
 
             //Singletons
             services.AddSingleton<IConfigProvider>(config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, GroupProjectDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -54,7 +67,10 @@
             });
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
+
+            //dbContext.Database.EnsureCreated();
         }
     }
 }

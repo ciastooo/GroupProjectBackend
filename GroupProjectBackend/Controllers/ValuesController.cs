@@ -11,9 +11,9 @@ namespace GroupProjectBackend.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly GroupProjectContext _dbContext;
+        private readonly GroupProjectDbContext _dbContext;
 
-        public ValuesController(GroupProjectContext dbContext)
+        public ValuesController(GroupProjectDbContext dbContext)
         {
             _dbContext = dbContext;
         }
