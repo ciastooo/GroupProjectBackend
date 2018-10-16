@@ -69,8 +69,6 @@
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
-
-            //dbContext.Database.EnsureCreated();
         }
     }
 }
