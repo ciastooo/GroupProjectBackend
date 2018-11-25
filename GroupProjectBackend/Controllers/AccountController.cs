@@ -1,5 +1,6 @@
 ﻿using GroupProjectBackend.Models.DB;
 using GroupProjectBackend.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,7 +27,7 @@ namespace GroupProjectBackend.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
@@ -56,16 +57,33 @@ namespace GroupProjectBackend.Controllers
             try
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     return Ok("Logged in");
                 }
                 return BadRequest("Couldn't log in");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("IsAuthenticated")]
+        public async Task<IActionResult> IsAuthenticated()
+        {
+            return Ok();
         }
     }
 }
