@@ -11,6 +11,9 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Swashbuckle.AspNetCore.Swagger;
+    using System;
+    using System.IO;
+    using System.Reflection;
 
     public class Startup
     {
@@ -41,7 +44,10 @@
             services.Configure<IdentityOptions>(opt =>
             {
                 opt.Password.RequiredLength = 6;
-                opt.User.RequireUniqueEmail = true;
+                opt.User.RequireUniqueEmail = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireDigit = false;
             });
 
             //Singletons

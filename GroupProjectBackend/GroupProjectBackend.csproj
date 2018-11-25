@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\DB\Migrations\20181125105835_UserRegistration.cs" />
+    <Compile Remove="Models\DB\Migrations\20181125105835_UserRegistration.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
