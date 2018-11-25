@@ -1,20 +1,23 @@
-﻿namespace GroupProjectBackend.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+
+namespace GroupProjectBackend.Controllers
 {
-    using System.Web.Http;
-    using System;
-    using System.Net;
-
-    [RoutePrefix("api/[controller]")]
-    public class ValuesController : ApiController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ValuesController : ControllerBase
     {
-
         public ValuesController()
         {
         }
 
         // GET api/values
+        /// <summary>
+        /// Returns test
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public IHttpActionResult Get()
+        public IActionResult Get()
         {
             return Ok(new string[] { "value1", "value2" });
         }
@@ -22,14 +25,14 @@
         // GET api/values/5
         [HttpGet]
         [Route("{id}")]
-        public IHttpActionResult Get(int id)
+        public IActionResult Get(int id)
         {
             return Ok($"{id} value");
         }
 
         // POST api/values
         [HttpPost]
-        public IHttpActionResult Post([FromBody] string value)
+        public IActionResult Post([FromBody] string value)
         {
             return Created("", value);
         }
@@ -37,7 +40,7 @@
         // PUT api/values/5
         [HttpPut]
         [Route("{id}")]
-        public IHttpActionResult Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] string value)
         {
             return Ok();
         }
@@ -45,9 +48,9 @@
         // DELETE api/values/5
         [HttpDelete]
         [Route("{id}")]
-        public IHttpActionResult Delete(int id)
+        public IActionResult Delete(int id)
         {
-            return StatusCode(HttpStatusCode.NoContent);
+            return NoContent();
         }
     }
 }
