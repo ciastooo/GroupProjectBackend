@@ -12,7 +12,5 @@
         }
 
         public string ConnectionString => _config.GetSection("ConnectionString").Value;
-
-        public string JwtSecretKey => _config.GetSection("JwtSecretKey").Value;
     }
 }
