@@ -11,9 +11,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Swashbuckle.AspNetCore.Swagger;
-    using System;
-    using System.IO;
-    using System.Reflection;
 
     public class Startup
     {
@@ -37,9 +34,13 @@
 
             //DB and identity
             services.AddDbContext<GroupProjectDbContext>(opt => opt.UseSqlServer(config.ConnectionString));
+            System.Diagnostics.Trace.WriteLine("AAAAAAAAAAAAAAAA");
+            System.Diagnostics.Trace.WriteLine(config.ConnectionString);
+            System.Diagnostics.Trace.WriteLine("AAAAAAAAAAAAAAAA");
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<GroupProjectDbContext>()
                 .AddDefaultTokenProviders();
+            services.BuildServiceProvider().GetService<GroupProjectDbContext>().Database.Migrate();
 
             services.Configure<IdentityOptions>(opt =>
             {
@@ -75,6 +76,7 @@
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+
         }
     }
 }
