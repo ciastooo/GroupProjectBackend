@@ -9,8 +9,9 @@ namespace GroupProjectBackend.Models.DB
         public ApplicationUser()
         {
             Roles = new HashSet<IdentityUserRole<string>>();
-            Claims = new List<IdentityUserClaim<string>>();
-            Logins = new List<IdentityUserLogin<string>>();
+            Claims = new HashSet<IdentityUserClaim<string>>();
+            Logins = new HashSet<IdentityUserLogin<string>>();
+            Ratings = new HashSet<Rating>();
         }
 
         [Required(AllowEmptyStrings = false)]
@@ -24,5 +25,6 @@ namespace GroupProjectBackend.Models.DB
         public virtual ICollection<IdentityUserRole<string>> Roles { get; }
         public virtual ICollection<IdentityUserClaim<string>> Claims { get; }
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; }
+        public virtual ICollection<Rating> Ratings { get; }
     }
 }

@@ -4,7 +4,7 @@ namespace GroupProjectBackend.Models.Dto
 {
     public class UserRegistrationModelDto
     {
-        public string Ig { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [MaxLength(255)]

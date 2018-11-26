@@ -16,10 +16,11 @@
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationRole> ApplicationRoles { get; set; }
-        public DbSet<CategoryModelDto> Categories { get; set; }
-        public DbSet<PlaceModelDto> Places { get; set; }
-        public DbSet<RatingModelDto> Ratings { get; set; }
-        public DbSet<RouteModelDto> Routes { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Place> Places { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Route> Routes { get; set; }
+        public DbSet<RoutePlace> RoutePlaces { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +50,17 @@
                 .HasForeignKey(e => e.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Place>()
+                .HasMany(e => e.ToRoutePlaces)
+                .WithOne(e => e.ToPlace)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Place>()
+                .HasMany(e => e.FromRoutePlaces)
+                .WithOne(e => e.FromPlace)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
