@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GroupProjectBackend.Models.DB;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace GroupProjectBackend.Controllers
@@ -19,7 +20,8 @@ namespace GroupProjectBackend.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(new string[] { "value1", "value2" });
+            var dupa = new GroupProjectDbContext();
+            return Ok();
         }
 
         // GET api/values/5

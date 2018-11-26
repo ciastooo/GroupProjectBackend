@@ -1,5 +1,6 @@
 ﻿namespace GroupProjectBackend.Models.DB
 {
+    using GroupProjectBackend.Models.Dto;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
@@ -9,12 +10,16 @@
         {
         }
 
-        protected GroupProjectDbContext()
+        public GroupProjectDbContext()
         {
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationRole> ApplicationRoles { get; set; }
+        public DbSet<CategoryModelDto> Categories { get; set; }
+        public DbSet<PlaceModelDto> Places { get; set; }
+        public DbSet<RatingModelDto> Ratings { get; set; }
+        public DbSet<RouteModelDto> Routes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

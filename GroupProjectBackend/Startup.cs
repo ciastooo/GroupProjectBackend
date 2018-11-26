@@ -33,7 +33,7 @@
             });
 
             //DB and identity
-            services.AddDbContext<GroupProjectDbContext>(opt => opt.UseSqlServer(config.ConnectionString));
+            services.AddEntityFrameworkSqlServer().AddDbContext<GroupProjectDbContext>(opt => opt.UseSqlServer(config.ConnectionString));
             System.Diagnostics.Trace.WriteLine("AAAAAAAAAAAAAAAA");
             System.Diagnostics.Trace.WriteLine(config.ConnectionString);
             System.Diagnostics.Trace.WriteLine("AAAAAAAAAAAAAAAA");
