@@ -21,18 +21,31 @@ namespace GroupProjectBackend.Controllers
         }
 
         [HttpPut]
-        public Task<IActionResult> Add(PlaceDto model)
+        public async Task<IActionResult> Add(PlaceDto model)
         {
-            //TODO: validate model
-            var dbModel = new Place
+            try
             {
-                Name = model.label,
-                Latitude = model.position.lat,
-                Longitude = model.position.lng,
-                Description = model.description,
-                IsPublic = model.isPublic,
-                FullAddress = model.address,
-            };
+                //TODO: validate model and handle categories
+                var dbModel = new Place
+                {
+                    Name = model.label,
+                    Latitude = model.position.lat,
+                    Longitude = model.position.lng,
+                    Description = model.description,
+                    IsPublic = model.isPublic,
+                    FullAddress = model.address,
+                };
+
+                await _dbContext.Places.AddAsync(dbModel);
+                await _dbContext.SaveChangesAsync();
+
+                model.id = dbModel.Id;
+                return Ok(model);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
