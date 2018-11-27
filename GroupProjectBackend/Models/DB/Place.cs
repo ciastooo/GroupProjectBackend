@@ -18,8 +18,12 @@ namespace GroupProjectBackend.Models.DB
         public int CategoryId { get; set; }
 
         [Required(AllowEmptyStrings = false)]
-        [MaxLength(255)]
+        [MaxLength(50)]
         public string Name { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        [MaxLength(255)]
+        public string Description { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [MaxLength(255)]

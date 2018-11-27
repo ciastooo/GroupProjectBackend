@@ -10,7 +10,7 @@
         {
         }
 
-        public GroupProjectDbContext()
+        protected GroupProjectDbContext()
         {
         }
 

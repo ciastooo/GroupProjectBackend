@@ -20,8 +20,7 @@ namespace GroupProjectBackend.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var dupa = new GroupProjectDbContext();
-            return Ok();
+            return Ok(new string[] { "value1", "value2" });
         }
 
         // GET api/values/5
