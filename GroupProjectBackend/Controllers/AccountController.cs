@@ -1,10 +1,11 @@
-﻿using GroupProjectBackend.Models.DB;
-using GroupProjectBackend.Models.Dto;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using GroupProjectBackend.Models.DB;
+using GroupProjectBackend.Models.Dto;
 
 namespace GroupProjectBackend.Controllers
 {
@@ -27,15 +28,17 @@ namespace GroupProjectBackend.Controllers
         {
             try
             {
+                if (_signInManager.IsSignedIn(User))
+                {
+                    return BadRequest("Already logged in");
+                }
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
                 var user = new ApplicationUser
                 {
-                    UserName = model.Username,
-                    Name = model.Name,
-                    Surname = model.Surname
+                    UserName = model.Username
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -56,10 +59,22 @@ namespace GroupProjectBackend.Controllers
         {
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
-                if (result.Succeeded)
+                if (_signInManager.IsSignedIn(User))
                 {
-                    return Ok("Logged in");
+                    return BadRequest("Already logged in");
+                }
+                var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
+                if (loginResult.Succeeded)
+                {
+                    var user = await _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    var result = new UserRegistrationModelDto
+                    {
+                        Id = user.Id,
+                        Username = user.UserName,
+                        Name = user.Name,
+                        Surname = user.Surname
+                    };
+                    return Ok(result);
                 }
                 return BadRequest("Couldn't log in");
             }
@@ -83,7 +98,15 @@ namespace GroupProjectBackend.Controllers
         [Route("IsAuthenticated")]
         public async Task<IActionResult> IsAuthenticated()
         {
-            return Ok();
+            var user = await _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var result = new UserRegistrationModelDto
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                Name = user.Name,
+                Surname = user.Surname
+            };
+            return Ok(result);
         }
     }
 }
