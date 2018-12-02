@@ -11,6 +11,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Swashbuckle.AspNetCore.Swagger;
+    using AutoMapper;
 
     public class Startup
     {
@@ -26,6 +27,8 @@
         {
             IConfigProvider config = new ConfigProvider(Configuration);
 
+            Mapper.Initialize(cfg => cfg.AddProfile<GroupProjectProfile>());
+            services.AddAutoMapper();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(c =>
             {

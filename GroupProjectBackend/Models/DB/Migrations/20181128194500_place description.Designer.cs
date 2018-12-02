@@ -4,14 +4,16 @@ using GroupProjectBackend.Models.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GroupProjectBackend.Models.DB.Migrations
 {
     [DbContext(typeof(GroupProjectDbContext))]
-    partial class GroupProjectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181128194500_place description")]
+    partial class placedescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,16 +129,15 @@ namespace GroupProjectBackend.Models.DB.Migrations
                     b.Property<string>("Comment")
                         .HasMaxLength(255);
 
-                    b.Property<bool>("IsAddedByThisUser");
-
                     b.Property<bool>("IsFavourite");
 
                     b.Property<int?>("PlaceId");
 
-                    b.Property<int?>("RouteId");
+                    b.Property<int>("RouteId");
 
-                    b.Property<string>("UserId")
-                        .IsRequired();
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("UserId1");
 
                     b.Property<int>("UserRating");
 
@@ -146,7 +147,7 @@ namespace GroupProjectBackend.Models.DB.Migrations
 
                     b.HasIndex("RouteId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Ratings");
                 });
@@ -331,18 +332,18 @@ namespace GroupProjectBackend.Models.DB.Migrations
 
             modelBuilder.Entity("GroupProjectBackend.Models.DB.Rating", b =>
                 {
-                    b.HasOne("GroupProjectBackend.Models.DB.Place", "Place")
+                    b.HasOne("GroupProjectBackend.Models.DB.Place")
                         .WithMany("UserRatings")
                         .HasForeignKey("PlaceId");
 
                     b.HasOne("GroupProjectBackend.Models.DB.Route", "Route")
                         .WithMany()
-                        .HasForeignKey("RouteId");
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GroupProjectBackend.Models.DB.ApplicationUser", "User")
                         .WithMany("Ratings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("GroupProjectBackend.Models.DB.RoutePlace", b =>
