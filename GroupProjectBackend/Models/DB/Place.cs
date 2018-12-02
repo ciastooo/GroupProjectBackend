@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GroupProjectBackend.Models.DB
 {
@@ -15,6 +16,7 @@ namespace GroupProjectBackend.Models.DB
         [Required]
         public int Id { get; set; }
 
+        [Required]
         public int CategoryId { get; set; }
 
         [Required(AllowEmptyStrings = false)]
@@ -40,7 +42,8 @@ namespace GroupProjectBackend.Models.DB
         public float Latitude { get; set; }
 
         public float AverageRating { get; set; }
-        
+
+        [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
 
         public virtual ICollection<Rating> UserRatings { get; set; }
