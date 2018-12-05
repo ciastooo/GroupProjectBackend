@@ -38,7 +38,9 @@ namespace GroupProjectBackend.Controllers
                 }
                 var user = new ApplicationUser
                 {
-                    UserName = model.Username
+                    UserName = model.Username,
+                    Name = model.Name,
+                    Surname = model.Surname
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -66,7 +68,7 @@ namespace GroupProjectBackend.Controllers
                 var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
                 if (loginResult.Succeeded)
                 {
-                    var user = await _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    var user = await _userManager.FindByNameAsync(model.Username);
                     var result = new UserRegistrationModelDto
                     {
                         Id = user.Id,
