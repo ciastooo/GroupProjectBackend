@@ -14,7 +14,6 @@ namespace GroupProjectBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class PlaceController : ControllerBase
     {
         private readonly GroupProjectDbContext _dbContext;

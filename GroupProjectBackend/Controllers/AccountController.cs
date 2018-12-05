@@ -86,7 +86,6 @@ namespace GroupProjectBackend.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("Logout")]
         public async Task<IActionResult> Logout()
@@ -95,7 +94,6 @@ namespace GroupProjectBackend.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpGet]
         [Route("IsAuthenticated")]
         public async Task<IActionResult> IsAuthenticated()
