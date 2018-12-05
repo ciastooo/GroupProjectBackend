@@ -29,6 +29,7 @@
 
             Mapper.Initialize(cfg => cfg.AddProfile<GroupProjectProfile>());
             services.AddAutoMapper();
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(c =>
             {
@@ -69,6 +70,12 @@
             {
                 app.UseHsts();
             }
+
+            app.UseCors(options => {
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+                options.AllowAnyOrigin();
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
