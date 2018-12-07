@@ -60,12 +60,13 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var dbPlaceModel = _dbContext.Places.Where(p => p.Id == model.Id).SingleOrDefault();
+                    var dbPlaceModel = _dbContext.Places.Where(p => p.Id == model.Id).FirstOrDefault();
                     if (dbPlaceModel == null)
                         return NotFound();
 
                     dbPlaceModel = Mapper.Map<Place>(model);
-                    await _dbContext.SaveChangesAsync();
+                    _dbContext.Places.Update(dbPlaceModel);
+                    _dbContext.SaveChanges();
 
                     return Ok();
                 }
@@ -82,9 +83,12 @@ namespace GroupProjectBackend.Controllers
         {
             try
             {
-                var dbPlaceModel = _dbContext.Places.Where(p => p.Id == placeId).SingleOrDefault();
+                var dbPlaceModel = _dbContext.Places.Where(p => p.Id == placeId).FirstOrDefault();
                 if (dbPlaceModel == null)
                     return NotFound();
+
+                var dbPlaceRatings = _dbContext.Ratings.Where(r => r.PlaceId == placeId).ToList();
+                dbPlaceRatings.ForEach(rating => _dbContext.Ratings.Remove(rating));
 
                 _dbContext.Places.Remove(dbPlaceModel);
                 await _dbContext.SaveChangesAsync();
@@ -124,6 +128,35 @@ namespace GroupProjectBackend.Controllers
                     }
                     _dbContext.SaveChanges();
                     return Ok();
+                }
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("DeletePlaceFromFavourites/{userId}/{placeId}")]
+        public async Task<IActionResult> DeletePlaceFromFavourites(string userId, int placeId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var placeRating = _dbContext.Ratings.Where(r => r.UserId == userId && r.PlaceId == placeId).FirstOrDefault();
+
+                    //means that user has earlier either added this place by himself or just added comment to this place
+                    if (placeRating != null)
+                    {
+                        placeRating.IsFavourite = false;
+                        _dbContext.SaveChanges();
+                        return Ok();
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
                 }
                 return BadRequest(ModelState);
             }
