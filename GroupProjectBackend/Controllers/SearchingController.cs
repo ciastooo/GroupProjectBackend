@@ -23,13 +23,13 @@ namespace GroupProjectBackend.Controllers
             var places = _dbContext.Places;
             IQueryable<Place> query = null;
 
-            if (model.Label != "")
+            if (!string.IsNullOrEmpty(model.Label))
             {
-                query = places.Where(x => x.Name == model.Label);
+                query = places.Where(x => x.Name.ToUpperInvariant().Contains(model.Label.ToUpperInvariant()));
             }
-            if (model.FullAddress != "")
+            if (!string.IsNullOrEmpty(model.FullAddress))
             {
-                query = places.Where(x => x.FullAddress == model.FullAddress);
+                query = places.Where(x => x.FullAddress.ToUpperInvariant().Contains(model.FullAddress.ToUpperInvariant()));
             }
             if (model.CategoryId != 0)
             {
