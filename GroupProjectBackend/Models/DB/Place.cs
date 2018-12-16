@@ -19,15 +19,15 @@ namespace GroupProjectBackend.Models.DB
         [Required]
         public int CategoryId { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         [MaxLength(50)]
         public string Name { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         [MaxLength(255)]
         public string Description { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         [MaxLength(255)]
         public string FullAddress { get; set; }
 

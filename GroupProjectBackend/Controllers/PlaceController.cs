@@ -64,7 +64,7 @@ namespace GroupProjectBackend.Controllers
                     if (dbPlaceModel == null)
                         return NotFound();
 
-                    dbPlaceModel = Mapper.Map<Place>(model);
+                    dbPlaceModel = Mapper.Map<Place>(model); 
                     _dbContext.Places.Update(dbPlaceModel);
                     _dbContext.SaveChanges();
 
