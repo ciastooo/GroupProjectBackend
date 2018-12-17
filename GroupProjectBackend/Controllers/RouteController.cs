@@ -188,6 +188,8 @@ namespace GroupProjectBackend.Controllers
                 dbModel.Description = model.Description;
                 dbModel.IsPublic = model.IsPublic;
 
+                _dbContext.RoutePlaces.RemoveRange(dbModel.RoutePlaces);
+
                 for (int i = 0; i < model.Places.Count; i++)
                 {
                     var dbRoutePolace = new RoutePlace
@@ -199,7 +201,6 @@ namespace GroupProjectBackend.Controllers
                     dbModel.RoutePlaces.Add(dbRoutePolace);
                 }
 
-                await _dbContext.Routes.AddAsync(dbModel);
                 await _dbContext.SaveChangesAsync();
 
                 return Ok(dbModel);
