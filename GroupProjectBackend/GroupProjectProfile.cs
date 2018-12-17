@@ -13,8 +13,7 @@ public class GroupProjectProfile: Profile
             .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Position.Lng))
             .ForMember(dest => dest.AverageRating, opt => opt.Ignore())
             .ForMember(dest => dest.Category, opt => opt.Ignore())
-            .ForMember(dest => dest.FromRoutePlaces, opt => opt.Ignore())
-            .ForMember(dest => dest.ToRoutePlaces, opt => opt.Ignore())
+            .ForMember(dest => dest.RoutePlaces, opt => opt.Ignore())
             .ForMember(dest => dest.UserRatings, opt => opt.Ignore());
 
     }

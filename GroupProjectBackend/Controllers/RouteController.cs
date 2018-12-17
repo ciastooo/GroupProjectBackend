@@ -21,6 +21,7 @@ namespace GroupProjectBackend.Controllers
             _dbContext = dbContext;
         }
 
+        [Produces("application/json")]
         [HttpGet]
         public async Task<IActionResult> GetAllPublicRoutes()
         {
@@ -60,6 +61,7 @@ namespace GroupProjectBackend.Controllers
             }
         }
 
+        [Produces("application/json")]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetAllUserRoutes(string userId)
         {

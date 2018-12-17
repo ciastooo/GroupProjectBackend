@@ -1,7 +1,4 @@
-﻿using GroupProjectBackend.Models.DB;
-using System.Collections.Generic;
-
-namespace GroupProjectBackend.Models.Dto
+﻿namespace GroupProjectBackend.Models.Dto
 {
     public class SearchingDto
     {
@@ -9,6 +6,8 @@ namespace GroupProjectBackend.Models.Dto
         public string FullAddress { get; set; }
         public int CategoryId { get; set; }
         public int AverageRating { get; set; }
-    }
-    
+        public float Distance { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+    }    
 }
