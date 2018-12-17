@@ -38,13 +38,10 @@
 
             //DB and identity
             services.AddDbContext<GroupProjectDbContext>(opt => opt.UseSqlServer(config.ConnectionString));
-            System.Diagnostics.Trace.WriteLine("AAAAAAAAAAAAAAAA");
-            System.Diagnostics.Trace.WriteLine(config.ConnectionString);
-            System.Diagnostics.Trace.WriteLine("AAAAAAAAAAAAAAAA");
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<GroupProjectDbContext>()
                 .AddDefaultTokenProviders();
-            services.BuildServiceProvider().GetService<GroupProjectDbContext>().Database.Migrate();
+            //services.BuildServiceProvider().GetService<GroupProjectDbContext>().Database.Migrate();
 
             services.Configure<IdentityOptions>(opt =>
             {

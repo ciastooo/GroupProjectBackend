@@ -46,11 +46,11 @@ namespace GroupProjectBackend.Controllers
                 if (model.Distance > 0 && model.Lat != 0 && model.Lng != 0)
                 {
                     var latKm = 110.57;
-                    var lngKm = Math.Cos(model.Lat) * 111.32;
+                    var lngKm = 111.32;
                     var minLat = model.Lat - model.Distance / latKm;
                     var maxLat = model.Lat + model.Distance / latKm;
-                    var minLng = model.Lat - model.Distance / lngKm;
-                    var maxLng = model.Lat + model.Distance / lngKm;
+                    var minLng = model.Lng - model.Distance / lngKm;
+                    var maxLng = model.Lng + model.Distance / lngKm;
                     query = query.Where(p => (minLat <= p.Latitude && p.Latitude <= maxLat) && (minLng <= p.Longitude && p.Longitude <= maxLng));
                 }
                 var placeList = await query.ToListAsync();
