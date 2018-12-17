@@ -9,8 +9,7 @@ namespace GroupProjectBackend.Models.DB
         public Place()
         {
             UserRatings = new HashSet<Rating>();
-            ToRoutePlaces = new HashSet<RoutePlace>();
-            FromRoutePlaces = new HashSet<RoutePlace>();
+            RoutePlaces = new HashSet<RoutePlace>();
         }
 
         [Required]
@@ -48,8 +47,6 @@ namespace GroupProjectBackend.Models.DB
 
         public virtual ICollection<Rating> UserRatings { get; set; }
 
-        public virtual ICollection<RoutePlace> ToRoutePlaces { get; set; }
-
-        public virtual ICollection<RoutePlace> FromRoutePlaces { get; set; }
+        public virtual ICollection<RoutePlace> RoutePlaces { get; set; }
     }
 }

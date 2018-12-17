@@ -17,6 +17,9 @@ namespace GroupProjectBackend.Models.DB
         [MaxLength(50)]
         public string Name { get; set; }
 
+        [Required(AllowEmptyStrings = false)]
+        public string UserId { get; set; }
+
         [MaxLength(255)]
         public string Description { get; set; }
 

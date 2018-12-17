@@ -52,13 +52,8 @@
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Place>()
-                .HasMany(e => e.ToRoutePlaces)
-                .WithOne(e => e.ToPlace)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Place>()
-                .HasMany(e => e.FromRoutePlaces)
-                .WithOne(e => e.FromPlace)
+                .HasMany(e => e.RoutePlaces)
+                .WithOne(e => e.Place)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
         }
