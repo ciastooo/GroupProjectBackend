@@ -9,7 +9,6 @@ namespace GroupProjectBackend.Models.DB
         public Place()
         {
             UserRatings = new HashSet<Rating>();
-            RoutePlaces = new HashSet<RoutePlace>();
         }
 
         [Required]
@@ -40,13 +39,11 @@ namespace GroupProjectBackend.Models.DB
         [Required]
         public float Latitude { get; set; }
 
-        public float AverageRating { get; set; }
+        public double AverageRating { get; set; }
 
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
 
         public virtual ICollection<Rating> UserRatings { get; set; }
-
-        public virtual ICollection<RoutePlace> RoutePlaces { get; set; }
     }
 }

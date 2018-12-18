@@ -9,12 +9,14 @@ namespace GroupProjectBackend.Models.DB
 
         public int RouteId { get; set; }
 
-        public int PlaceId { get; set; }
-
         public int Order { get; set; }
 
-        public virtual Route Route { get; set; }
+        [Required]
+        public float Longitude { get; set; }
 
-        public virtual Place Place { get; set; }
+        [Required]
+        public float Latitude { get; set; }
+
+        public virtual Route Route { get; set; }
     }
 }

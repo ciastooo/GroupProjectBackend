@@ -70,6 +70,7 @@ namespace GroupProjectBackend.Controllers
                     dbPlaceModel.Longitude = model.Position.Lng;
                     dbPlaceModel.IsPublic = model.IsPublic;
                     dbPlaceModel.FullAddress = model.FullAddress;
+                    dbPlaceModel.CategoryId = model.Category.Id;
 
                     await _dbContext.SaveChangesAsync();
 
@@ -195,8 +196,11 @@ namespace GroupProjectBackend.Controllers
                             IsAddedByThisUser = false,
                             UserRating = grade
                         };
-                        _dbContext.Ratings.Add(newPlaceRating);
+                        await _dbContext.Ratings.AddAsync(newPlaceRating);
                     }
+
+                    var dbPlace = await _dbContext.Places.Where(p => p.Id == placeId).Include(p => p.UserRatings).FirstOrDefaultAsync();
+                    dbPlace.AverageRating = dbPlace.UserRatings.Where(r => r.UserRating > 0).Average(r => r.UserRating);
 
                     _dbContext.SaveChanges();
                     return Ok();

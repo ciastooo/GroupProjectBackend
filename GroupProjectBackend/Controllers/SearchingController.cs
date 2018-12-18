@@ -60,7 +60,7 @@ namespace GroupProjectBackend.Controllers
                     Label = p.Name,
                     Description = p.Description,
                     IsPublic = p.IsPublic,
-                    AverageRating = p.UserRatings.Where(r => r.UserRating > 0).Average(r => r.UserRating),
+                    AverageRating = p.AverageRating,
                     Category = new CategoryDto
                     {
                         Description = p.Category.Description,
@@ -85,7 +85,7 @@ namespace GroupProjectBackend.Controllers
 
 
         [Produces("application/json")]
-        [HttpGet("SearchRoute")]
+        [HttpPost("SearchRoute")]
         public async Task<IActionResult> SearchRoute(SearchingDto model)
         {
             try
@@ -98,34 +98,20 @@ namespace GroupProjectBackend.Controllers
                 }
                 if (model.AverageRating != 0)
                 {
-                    query = query.Where(r => r.RoutePlaces.Any(rp => rp.Place.AverageRating >= model.AverageRating && rp.Place.AverageRating < model.AverageRating + 1));
+                    query = query.Where(r => r.AverageRating >= model.AverageRating && r.AverageRating < model.AverageRating + 1);
                 }
 
-                var placeList = await query.Select(r => new RouteDto
+                var placeList = await query.Include(r => r.UserRatings).Select(r => new RouteDto
                 {
                     Id = r.Id,
                     Description = r.Description,
                     Name = r.Name,
                     IsPublic = r.IsPublic,
-                    AverageRating = r.UserRatings.Average(ur => ur.UserRating),
-                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
+                    AverageRating = r.AverageRating,
+                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PositionDto
                     {
-                        Id = rp.PlaceId,
-                        Label = rp.Place.Name,
-                        Position = new PositionDto
-                        {
-                            Lat = rp.Place.Latitude,
-                            Lng = rp.Place.Longitude
-                        },
-                        Description = rp.Place.Description,
-                        IsPublic = rp.Place.IsPublic,
-                        FullAddress = rp.Place.FullAddress,
-                        Category = new CategoryDto
-                        {
-                            Id = rp.Place.Category.Id,
-                            Name = rp.Place.Category.Name,
-                            Description = rp.Place.Category.Description
-                        }
+                        Lat = rp.Latitude,
+                        Lng = rp.Longitude
                     }).ToList()
                 }).ToListAsync();
 

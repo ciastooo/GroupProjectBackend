@@ -51,9 +51,9 @@
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Place>()
+            modelBuilder.Entity<Route>()
                 .HasMany(e => e.RoutePlaces)
-                .WithOne(e => e.Place)
+                .WithOne(e => e.Route)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
         }

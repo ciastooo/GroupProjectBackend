@@ -11,8 +11,9 @@ namespace GroupProjectBackend.Models.Dto
         public string Description { get; set; }
 
         public bool IsPublic { get; set; }
+
         public double AverageRating { get; set; }
 
-        public IList<PlaceDto> Places { get; set; }
+        public IList<PositionDto> Places { get; set; }
     }
 }

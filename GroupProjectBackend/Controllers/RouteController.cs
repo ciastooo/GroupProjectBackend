@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using GroupProjectBackend.Models.DB;
 using GroupProjectBackend.Models.Dto;
@@ -34,24 +35,10 @@ namespace GroupProjectBackend.Controllers
                     Name = r.Name,
                     IsPublic = r.IsPublic,
                     AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
-                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
+                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PositionDto
                     {
-                        Id = rp.PlaceId,
-                        Label = rp.Place.Name,
-                        Position = new PositionDto
-                        {
-                            Lat = rp.Place.Latitude,
-                            Lng = rp.Place.Longitude
-                        },
-                        Description = rp.Place.Description,
-                        IsPublic = rp.Place.IsPublic,
-                        FullAddress = rp.Place.FullAddress,
-                        Category = new CategoryDto
-                        {
-                            Id = rp.Place.Category.Id,
-                            Name = rp.Place.Category.Name,
-                            Description = rp.Place.Category.Description
-                        }
+                        Lat = rp.Latitude,
+                        Lng = rp.Longitude
                     }).ToList()
                 }).ToListAsync();
                 return Ok(routes);
@@ -79,24 +66,10 @@ namespace GroupProjectBackend.Controllers
                     Name = r.Name,
                     IsPublic = r.IsPublic,
                     AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
-                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
+                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PositionDto
                     {
-                        Id = rp.PlaceId,
-                        Label = rp.Place.Name,
-                        Position = new PositionDto
-                        {
-                            Lat = rp.Place.Latitude,
-                            Lng = rp.Place.Longitude
-                        },
-                        Description = rp.Place.Description,
-                        IsPublic = rp.Place.IsPublic,
-                        FullAddress = rp.Place.FullAddress,
-                        Category = new CategoryDto
-                        {
-                            Id = rp.Place.Category.Id,
-                            Name = rp.Place.Category.Name,
-                            Description = rp.Place.Category.Description
-                        }
+                        Lat = rp.Latitude,
+                        Lng = rp.Longitude
                     }).ToList()
                 }).ToListAsync();
                 return Ok(routes);
@@ -122,6 +95,7 @@ namespace GroupProjectBackend.Controllers
                     Description = model.Description,
                     Name = model.Name,
                     IsPublic = model.IsPublic,
+                    UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value,
                     RoutePlaces = new List<RoutePlace>()
                 };
 
@@ -130,11 +104,20 @@ namespace GroupProjectBackend.Controllers
                     var dbRoutePolace = new RoutePlace
                     {
                         Order = i,
-                        PlaceId = model.Places[i].Id,
+                        Longitude = model.Places[i].Lng,
+                        Latitude = model.Places[i].Lat,
                         Route = dbModel
                     };
                     dbModel.RoutePlaces.Add(dbRoutePolace);
                 }
+
+                var dbRatingModel = new Rating
+                {
+                    UserId = dbModel.UserId,
+                    Route= dbModel,
+                    IsAddedByThisUser = true
+                };
+                await _dbContext.Ratings.AddAsync(dbRatingModel);
 
                 await _dbContext.Routes.AddAsync(dbModel);
                 await _dbContext.SaveChangesAsync();
@@ -152,12 +135,13 @@ namespace GroupProjectBackend.Controllers
         {
             try
             {
-                var dbModel = await _dbContext.Routes.Include(r => r.RoutePlaces).Where(r => r.Id == id).FirstOrDefaultAsync();
+                var dbModel = await _dbContext.Routes.Include(r => r.RoutePlaces).Include(r => r.UserRatings).Where(r => r.Id == id).FirstOrDefaultAsync();
                 if (dbModel == null)
                 {
                     return NotFound();
                 }
 
+                _dbContext.Ratings.RemoveRange(dbModel.UserRatings);
                 _dbContext.RoutePlaces.RemoveRange(dbModel.RoutePlaces);
                 _dbContext.Routes.Remove(dbModel);
 
@@ -199,7 +183,8 @@ namespace GroupProjectBackend.Controllers
                     var dbRoutePolace = new RoutePlace
                     {
                         Order = i,
-                        PlaceId = model.Places[i].Id,
+                        Longitude = model.Places[i].Lng,
+                        Latitude = model.Places[i].Lat,
                         Route = dbModel
                     };
                     dbModel.RoutePlaces.Add(dbRoutePolace);
@@ -240,7 +225,10 @@ namespace GroupProjectBackend.Controllers
                         _dbContext.Ratings.Add(rating);
                     }
 
-                    _dbContext.SaveChanges();
+                    var dbRoute = await _dbContext.Routes.Where(r => r.Id == routeId).Include(p => p.UserRatings).FirstOrDefaultAsync();
+                    dbRoute.AverageRating = dbRoute.UserRatings.Where(r => r.UserRating > 0).Average(r => r.UserRating);
+
+                    await _dbContext.SaveChangesAsync();
                     return Ok();
                 }
                 return BadRequest(ModelState);
@@ -303,24 +291,10 @@ namespace GroupProjectBackend.Controllers
                             Name = r.Route.Name,
                             IsPublic = r.Route.IsPublic,
                             AverageRating = (float)r.Route.UserRatings.Average(ur => ur.UserRating),
-                            Places = r.Route.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
+                            Places = r.Route.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PositionDto
                             {
-                                Id = rp.PlaceId,
-                                Label = rp.Place.Name,
-                                Position = new PositionDto
-                                {
-                                    Lat = rp.Place.Latitude,
-                                    Lng = rp.Place.Longitude
-                                },
-                                Description = rp.Place.Description,
-                                IsPublic = rp.Place.IsPublic,
-                                FullAddress = rp.Place.FullAddress,
-                                Category = new CategoryDto
-                                {
-                                    Id = rp.Place.Category.Id,
-                                    Name = rp.Place.Category.Name,
-                                    Description = rp.Place.Category.Description
-                                }
+                                Lat = rp.Latitude,
+                                Lng = rp.Longitude
                             }).ToList()
                         }).ToListAsync();
                     return Ok(routes);

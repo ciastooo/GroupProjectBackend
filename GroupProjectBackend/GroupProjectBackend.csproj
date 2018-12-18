@@ -9,6 +9,12 @@
   <ItemGroup>
     <Compile Remove="Models\DB\Migrations\20181125105835_UserRegistration.cs" />
     <Compile Remove="Models\DB\Migrations\20181125105835_UserRegistration.Designer.cs" />
+    <Compile Remove="Models\DB\Migrations\20181218194836_RoutesWholeRefactor.cs" />
+    <Compile Remove="Models\DB\Migrations\20181218194836_RoutesWholeRefactor.Designer.cs" />
+    <Compile Remove="Models\DB\Migrations\20181218203808_AdddedAverageRating.cs" />
+    <Compile Remove="Models\DB\Migrations\20181218203808_AdddedAverageRating.Designer.cs" />
+    <Compile Remove="Models\DB\Migrations\20181218210558_Refactor.cs" />
+    <Compile Remove="Models\DB\Migrations\20181218210558_Refactor.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
