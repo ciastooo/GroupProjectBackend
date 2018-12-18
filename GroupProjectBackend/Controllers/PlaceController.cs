@@ -60,13 +60,18 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var dbPlaceModel = _dbContext.Places.Where(p => p.Id == model.Id).FirstOrDefault();
+                    var dbPlaceModel = await _dbContext.Places.Where(p => p.Id == model.Id).FirstOrDefaultAsync();
                     if (dbPlaceModel == null)
                         return NotFound();
 
-                    dbPlaceModel = Mapper.Map<Place>(model); 
-                    _dbContext.Places.Update(dbPlaceModel);
-                    _dbContext.SaveChanges();
+                    dbPlaceModel.Description = model.Description;
+                    dbPlaceModel.Name = model.Label;
+                    dbPlaceModel.Latitude = model.Position.Lat;
+                    dbPlaceModel.Longitude = model.Position.Lng;
+                    dbPlaceModel.IsPublic = model.IsPublic;
+                    dbPlaceModel.FullAddress = model.FullAddress;
+
+                    await _dbContext.SaveChangesAsync();
 
                     return Ok();
                 }
@@ -108,7 +113,7 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var placeRating = _dbContext.Ratings.Where(r => r.UserId == userId && r.PlaceId == placeId).FirstOrDefault();
+                    var placeRating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.PlaceId == placeId).FirstOrDefaultAsync();
 
                     //means that user has earlier either added this place by himself or just added comment to this place
                     if (placeRating != null)
