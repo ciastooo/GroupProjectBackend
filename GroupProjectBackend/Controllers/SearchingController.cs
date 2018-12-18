@@ -107,6 +107,7 @@ namespace GroupProjectBackend.Controllers
                     Description = r.Description,
                     Name = r.Name,
                     IsPublic = r.IsPublic,
+                    AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
                     Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
                     {
                         Id = rp.PlaceId,

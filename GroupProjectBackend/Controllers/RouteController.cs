@@ -33,6 +33,7 @@ namespace GroupProjectBackend.Controllers
                     Description = r.Description,
                     Name = r.Name,
                     IsPublic = r.IsPublic,
+                    AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
                     Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
                     {
                         Id = rp.PlaceId,
@@ -77,6 +78,7 @@ namespace GroupProjectBackend.Controllers
                     Description = r.Description,
                     Name = r.Name,
                     IsPublic = r.IsPublic,
+                    AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
                     Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
                     {
                         Id = rp.PlaceId,
@@ -206,6 +208,187 @@ namespace GroupProjectBackend.Controllers
                 await _dbContext.SaveChangesAsync();
 
                 return Ok(dbModel);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("AddUserRating/{userId}/{routeId}/{grade}")]
+        public async Task<IActionResult> AddUserRating(string userId, int routeId, int grade)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var rating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.Id == routeId).FirstOrDefaultAsync();
+
+                    if (rating != null)
+                    {
+                        rating.UserRating = grade;
+                    }
+                    else
+                    {
+                        rating = new Rating
+                        {
+                            UserId = userId,
+                            RouteId = routeId,
+                            IsAddedByThisUser = false,
+                            UserRating = grade
+                        };
+                        _dbContext.Ratings.Add(rating);
+                    }
+
+                    _dbContext.SaveChanges();
+                    return Ok();
+                }
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("AddComment/{userId}/{routeId}/{comment}")]
+        public async Task<IActionResult> AddComment(string userId, int routeId, string comment)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var rating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.Id == routeId).FirstOrDefaultAsync();
+
+                    if (rating != null)
+                    {
+                        rating.Comment = comment;
+                    }
+                    else
+                    {
+                        var newRating = new Rating
+                        {
+                            UserId = userId,
+                            RouteId = routeId,
+                            IsAddedByThisUser = false,
+                            Comment = comment
+                        };
+                        await _dbContext.Ratings.AddAsync(newRating);
+                    }
+                    await _dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [Produces("application/json")]
+        [HttpGet("GetFavouriteRoutes/{userId}")]
+        public async Task<IActionResult> GetFavouriteRoutes(string userId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var routes = _dbContext.Ratings.Where(r => r.UserId == userId && r.RouteId.HasValue && r.IsFavourite)
+                        .Select(r => new RouteDto
+                        {
+                            Id = r.RouteId.Value,
+                            Description = r.Route.Description,
+                            Name = r.Route.Name,
+                            IsPublic = r.Route.IsPublic,
+                            AverageRating = (float)r.Route.UserRatings.Average(ur => ur.UserRating),
+                            Places = r.Route.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
+                            {
+                                Id = rp.PlaceId,
+                                Label = rp.Place.Name,
+                                Position = new PositionDto
+                                {
+                                    Lat = rp.Place.Latitude,
+                                    Lng = rp.Place.Longitude
+                                },
+                                Description = rp.Place.Description,
+                                IsPublic = rp.Place.IsPublic,
+                                FullAddress = rp.Place.FullAddress,
+                                Category = new CategoryDto
+                                {
+                                    Id = rp.Place.Category.Id,
+                                    Name = rp.Place.Category.Name,
+                                    Description = rp.Place.Category.Description
+                                }
+                            }).ToList()
+                        }).ToListAsync();
+                    return Ok(routes);
+                }
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("AddRouteToFavourites/{userId}/{routeId}")]
+        public async Task<IActionResult> AddToFavourites(string userId, int routeId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var rating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.RouteId == routeId).FirstOrDefaultAsync();
+
+                    if (rating != null)
+                    {
+                        rating.IsFavourite = true;
+                    }
+                    else
+                    {
+                        rating = new Rating
+                        {
+                            UserId = userId,
+                            RouteId = routeId,
+                            IsAddedByThisUser = false,
+                            IsFavourite = true
+                        };
+                        _dbContext.Ratings.Add(rating);
+                    }
+                    _dbContext.SaveChanges();
+                    return Ok();
+                }
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("DeleteRouteFromFavourites/{userId}/{routeId}")]
+        public async Task<IActionResult> DeleteFromFavourites(string userId, int routeId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var rating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.RouteId == routeId).FirstOrDefaultAsync();
+
+                    if (rating != null)
+                    {
+                        rating.IsFavourite = false;
+                        _dbContext.SaveChanges();
+                        return Ok();
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+                return BadRequest(ModelState);
             }
             catch (Exception ex)
             {

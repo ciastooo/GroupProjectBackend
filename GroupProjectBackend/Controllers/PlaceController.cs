@@ -260,7 +260,7 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var favPlaces = _dbContext.Ratings.Where(r => r.UserId == userId && r.IsFavourite == true)
+                    var favPlaces = _dbContext.Ratings.Where(r => r.UserId == userId && r.PlaceId.HasValue && r.IsFavourite == true)
                         .Select(r => new PlaceDto
                         {
                             Id = r.Place.Id,
@@ -286,7 +286,7 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var myPlaces = _dbContext.Ratings.Where(r => r.UserId == userId && r.IsAddedByThisUser == true)
+                    var myPlaces = _dbContext.Ratings.Where(r => r.UserId == userId && r.PlaceId.HasValue && r.IsAddedByThisUser)
                         .Select(r => new PlaceDto
                         {
                             Id = r.Place.Id,
