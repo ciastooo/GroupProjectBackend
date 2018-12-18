@@ -60,7 +60,7 @@ namespace GroupProjectBackend.Controllers
                     Label = p.Name,
                     Description = p.Description,
                     IsPublic = p.IsPublic,
-                    AverageRating = p.AverageRating,
+                    AverageRating = p.UserRatings.Where(r => r.UserRating > 0).Average(r => r.UserRating),
                     Category = new CategoryDto
                     {
                         Description = p.Category.Description,
@@ -107,7 +107,7 @@ namespace GroupProjectBackend.Controllers
                     Description = r.Description,
                     Name = r.Name,
                     IsPublic = r.IsPublic,
-                    AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
+                    AverageRating = r.UserRatings.Average(ur => ur.UserRating),
                     Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
                     {
                         Id = rp.PlaceId,

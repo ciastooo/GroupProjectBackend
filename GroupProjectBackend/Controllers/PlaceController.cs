@@ -198,9 +198,6 @@ namespace GroupProjectBackend.Controllers
                         _dbContext.Ratings.Add(newPlaceRating);
                     }
 
-                    var place = _dbContext.Places.Where(p => p.Id == placeId).SingleOrDefault();
-                    place.AverageRating = (float)_dbContext.Ratings.Where(r => r.PlaceId == placeId).Average(ur => ur.UserRating);
-
                     _dbContext.SaveChanges();
                     return Ok();
                 }
@@ -265,7 +262,7 @@ namespace GroupProjectBackend.Controllers
                         {
                             Id = r.Place.Id,
                             UserId = r.UserId,
-                            Label = r.Place.Name,
+                            Label = r.Place.Name
                         }).ToList();
                     return Ok(favPlaces);
                 }
@@ -342,27 +339,23 @@ namespace GroupProjectBackend.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var placeRating = _dbContext.Ratings.Where(r => r.PlaceId == placeId && r.UserId == userId)
-                        .Select(r => new RatingDto
-                        {
-                            IsFavourite = r.IsFavourite,
-                            UserRating = r.UserRating
-                        }).FirstOrDefault();
+                var placeRating = _dbContext.Ratings.Where(r => r.PlaceId == placeId && r.UserId == userId)
+                    .Select(r => new RatingDto
+                    {
+                        IsFavourite = r.IsFavourite,
+                        UserRating = r.UserRating
+                    }).FirstOrDefault();
 
-                    //this user has neither added this place, nor commented it, nor given the rating to it.
-                    if (placeRating == null)
-                        placeRating = new RatingDto();
-                    placeRating.Comments = _dbContext.Ratings.Where(r => r.PlaceId == placeId)
-                        .Select(r => new CommentDto
-                        {
-                            UserName = r.User.Name,
-                            Comment = r.Comment
-                        }).ToList();
-                    return Ok(placeRating);
-                }
-                return BadRequest(ModelState);
+                //this user has neither added this place, nor commented it, nor given the rating to it.
+                if (placeRating == null)
+                    placeRating = new RatingDto();
+                placeRating.Comments = _dbContext.Ratings.Where(r => r.PlaceId == placeId)
+                    .Select(r => new CommentDto
+                    {
+                        UserName = r.User.UserName,
+                        Comment = r.Comment
+                    }).ToList();
+                return Ok(placeRating);
             }
             catch (Exception ex)
             {
