@@ -21,11 +21,11 @@ namespace GroupProjectBackend.Controllers
 
         [Produces("application/json")]
         [HttpPost("SearchPlace")]
-        public async Task<IActionResult> SearchPlace(SearchingDto model)
+        public async Task<IActionResult> SearchPlace(PlaceSearchingDto model)
         {
             try
             {
-                var query = _dbContext.Places.AsQueryable();
+                var query = _dbContext.Places.Where(p => p.IsPublic);
 
                 if (!string.IsNullOrEmpty(model.Label))
                 {
@@ -53,7 +53,27 @@ namespace GroupProjectBackend.Controllers
                     var maxLng = model.Lng + model.Distance / lngKm;
                     query = query.Where(p => (minLat <= p.Latitude && p.Latitude <= maxLat) && (minLng <= p.Longitude && p.Longitude <= maxLng));
                 }
-                var placeList = await query.ToListAsync();
+                var placeList = await query.Select(p => new PlaceDto
+                {
+                    Id = p.Id,
+                    UserId = p.UserRatings.Where(r => r.IsAddedByThisUser).FirstOrDefault().UserId,
+                    Label = p.Name,
+                    Description = p.Description,
+                    IsPublic = p.IsPublic,
+                    AverageRating = p.AverageRating,
+                    Category = new CategoryDto
+                    {
+                        Description = p.Category.Description,
+                        Id = p.CategoryId,
+                        Name = p.Category.Name
+                    },
+                    Position = new PositionDto
+                    {
+                        Lng = p.Longitude,
+                        Lat = p.Latitude
+                    },
+                    FullAddress = p.FullAddress
+                }).ToListAsync();
 
                 return Ok(placeList);
             }
@@ -66,9 +86,54 @@ namespace GroupProjectBackend.Controllers
 
         [Produces("application/json")]
         [HttpGet("SearchRoute")]
-        public IActionResult SearchRoute()
+        public async Task<IActionResult> SearchRoute(SearchingDto model)
         {
-            return Ok();
+            try
+            {
+                var query = _dbContext.Routes.AsQueryable();
+
+                if (!string.IsNullOrEmpty(model.Label))
+                {
+                    query = query.Where(r => r.Name.ToUpperInvariant().Contains(model.Label.ToUpperInvariant()));
+                }
+                if (model.AverageRating != 0)
+                {
+                    query = query.Where(r => r.RoutePlaces.Any(rp => rp.Place.AverageRating >= model.AverageRating && rp.Place.AverageRating < model.AverageRating + 1));
+                }
+
+                var placeList = await query.Select(r => new RouteDto
+                {
+                    Id = r.Id,
+                    Description = r.Description,
+                    Name = r.Name,
+                    IsPublic = r.IsPublic,
+                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PlaceDto
+                    {
+                        Id = rp.PlaceId,
+                        Label = rp.Place.Name,
+                        Position = new PositionDto
+                        {
+                            Lat = rp.Place.Latitude,
+                            Lng = rp.Place.Longitude
+                        },
+                        Description = rp.Place.Description,
+                        IsPublic = rp.Place.IsPublic,
+                        FullAddress = rp.Place.FullAddress,
+                        Category = new CategoryDto
+                        {
+                            Id = rp.Place.Category.Id,
+                            Name = rp.Place.Category.Name,
+                            Description = rp.Place.Category.Description
+                        }
+                    }).ToList()
+                }).ToListAsync();
+
+                return Ok(placeList);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }
