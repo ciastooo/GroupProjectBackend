@@ -107,6 +107,37 @@ namespace GroupProjectBackend.Controllers
             }
         }
 
+        [Produces("application/json")]
+        [HttpGet("favorites/{userId}")]
+        public async Task<IActionResult> GetAllUserFavouritesRoutes(string userId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest();
+                }
+                var routes = await _dbContext.Routes.Where(r => r.UserId == userId && r.UserRatings.Any(ur => ur.UserId == userId && ur.IsFavourite)).Select(r => new RouteDto
+                {
+                    Id = r.Id,
+                    Description = r.Description,
+                    Name = r.Name,
+                    IsPublic = r.IsPublic,
+                    AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
+                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PositionDto
+                    {
+                        Lat = rp.Latitude,
+                        Lng = rp.Longitude
+                    }).ToList()
+                }).ToListAsync();
+                return Ok(routes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("{userId}")]
         public async Task<IActionResult> AddRoute(string userId, RouteDto model)
         {
