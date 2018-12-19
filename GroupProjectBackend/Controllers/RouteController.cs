@@ -80,8 +80,8 @@ namespace GroupProjectBackend.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> AddRoute(RouteDto model)
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> AddRoute(string userId, RouteDto model)
         {
             try
             {
@@ -95,11 +95,11 @@ namespace GroupProjectBackend.Controllers
                     Description = model.Description,
                     Name = model.Name,
                     IsPublic = model.IsPublic,
-                    UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                    UserId = userId,
                     RoutePlaces = new List<RoutePlace>()
                 };
 
-                for(int i = 0; i < model.Places.Count; i++)
+                for (int i = 0; i < model.Places.Count; i++)
                 {
                     var dbRoutePolace = new RoutePlace
                     {
@@ -111,18 +111,19 @@ namespace GroupProjectBackend.Controllers
                     dbModel.RoutePlaces.Add(dbRoutePolace);
                 }
 
-                var dbRatingModel = new Rating
-                {
-                    UserId = dbModel.UserId,
-                    Route= dbModel,
-                    IsAddedByThisUser = true
-                };
-                await _dbContext.Ratings.AddAsync(dbRatingModel);
-
                 await _dbContext.Routes.AddAsync(dbModel);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(dbModel);
+                var dbRatingModel = new Rating
+                {
+                    UserId = dbModel.UserId,
+                    Route = dbModel,
+                    IsAddedByThisUser = true
+                };
+                await _dbContext.Ratings.AddAsync(dbRatingModel);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {
