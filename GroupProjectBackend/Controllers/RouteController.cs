@@ -251,7 +251,7 @@ namespace GroupProjectBackend.Controllers
 
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(dbModel);
+                return Ok();
             }
             catch (Exception ex)
             {
