@@ -139,7 +139,7 @@ namespace GroupProjectBackend.Controllers
         }
 
         [HttpPut("{userId}")]
-        public async Task<IActionResult> AddRoute(string userId, RouteDto model)
+        public async Task<IActionResult> AddRoute(string userId, RouteDto model)    
         {
             try
             {
@@ -266,7 +266,7 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var rating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.Id == routeId).FirstOrDefaultAsync();
+                    var rating = _dbContext.Ratings.Where(r => r.UserId == userId && r.RouteId == routeId).FirstOrDefault();
 
                     if (rating != null)
                     {
@@ -305,7 +305,7 @@ namespace GroupProjectBackend.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var rating = await _dbContext.Ratings.Where(r => r.UserId == userId && r.Id == routeId).FirstOrDefaultAsync();
+                    var rating = _dbContext.Ratings.Where(r => r.UserId == userId && r.RouteId == routeId).FirstOrDefault();
 
                     if (rating != null)
                     {
@@ -445,12 +445,12 @@ namespace GroupProjectBackend.Controllers
                 //this user has neither added this place, nor commented it, nor given the rating to it.
                 if (placeRating == null)
                     placeRating = new RatingDto();
-                placeRating.Comments = _dbContext.Ratings.Where(r => r.RouteId == routeId)
+                placeRating.Comments = await _dbContext.Ratings.Where(r => r.RouteId == routeId && r.Comment != null)
                     .Select(r => new CommentDto
                     {
                         UserName = r.User.UserName,
                         Comment = r.Comment
-                    }).ToList();
+                    }).ToListAsync();
                 return Ok(placeRating);
             }
             catch (Exception ex)
