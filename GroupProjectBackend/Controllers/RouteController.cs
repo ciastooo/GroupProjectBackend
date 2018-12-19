@@ -23,6 +23,33 @@ namespace GroupProjectBackend.Controllers
         }
 
         [Produces("application/json")]
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetRoute(int id)
+        {
+            try
+            {
+                var route = await _dbContext.Routes.Where(r => r.Id == id).Select(r => new RouteDto
+                {
+                    Id = r.Id,
+                    Description = r.Description,
+                    Name = r.Name,
+                    IsPublic = r.IsPublic,
+                    AverageRating = (float)r.UserRatings.Average(ur => ur.UserRating),
+                    Places = r.RoutePlaces.OrderBy(rp => rp.Order).Select(rp => new PositionDto
+                    {
+                        Lat = rp.Latitude,
+                        Lng = rp.Longitude
+                    }).ToList()
+                }).FirstOrDefaultAsync();
+                return Ok(route);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Produces("application/json")]
         [HttpGet]
         public async Task<IActionResult> GetAllPublicRoutes()
         {
