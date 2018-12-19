@@ -428,5 +428,35 @@ namespace GroupProjectBackend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Produces("application/json")]
+        [HttpGet("GetRating/{userId}/{routeId}")]
+        public async Task<IActionResult> GetRating(string userId, int routeId)
+        {
+            try
+            {
+                var placeRating = await _dbContext.Ratings.Where(r => r.RouteId == routeId && r.UserId == userId)
+                    .Select(r => new RatingDto
+                    {
+                        IsFavourite = r.IsFavourite,
+                        UserRating = r.UserRating
+                    }).FirstOrDefaultAsync();
+
+                //this user has neither added this place, nor commented it, nor given the rating to it.
+                if (placeRating == null)
+                    placeRating = new RatingDto();
+                placeRating.Comments = _dbContext.Ratings.Where(r => r.RouteId == routeId)
+                    .Select(r => new CommentDto
+                    {
+                        UserName = r.User.UserName,
+                        Comment = r.Comment
+                    }).ToList();
+                return Ok(placeRating);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
