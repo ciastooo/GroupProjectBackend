@@ -322,6 +322,7 @@ namespace GroupProjectBackend.Controllers
                     Description = p.Description,
                     IsPublic = p.IsPublic,
                     FullAddress = p.FullAddress,
+                    AverageRating = p.AverageRating,
                     Category = new CategoryDto
                     {
                         Id = p.Category.Id,
